@@ -1,0 +1,78 @@
+package br.com.totvs.dto;
+import java.sql.Timestamp;
+
+public class Reuniao {
+    private String idReuniao;
+    private String transcricao;
+    private String participantes;
+    private String origemEntrada;
+    private Timestamp dataAnalise;
+    private Integer predRisco;
+    private Integer predOportunidade;
+    private String sentimento;
+    private String produtosDetectados;
+    private String modeloAnalise;
+
+    public Reuniao() {
+    }
+    public String getIdReuniao() {
+        return idReuniao;
+    }
+    public void setIdReuniao(String idReuniao) {
+        this.idReuniao = idReuniao;
+    }
+    public String getTranscricao() {
+        return transcricao;
+    }
+    public void setTranscricao(String transcricao) {
+        this.transcricao = transcricao;
+    }
+    public String getParticipantes() {
+        return participantes;
+    }
+    public void setParticipantes(String participantes) {
+        this.participantes = participantes;
+    }
+    public String getOrigemEntrada() {
+        return origemEntrada;
+    }
+    public void setOrigemEntrada(String origemEntrada) {
+        this.origemEntrada = origemEntrada;
+    }
+    public Timestamp getDataAnalise() {
+        return dataAnalise;
+    }
+    public void setDataAnalise(Timestamp dataAnalise) {
+        this.dataAnalise = dataAnalise;
+    }
+    public Integer getPredRisco() {
+        return predRisco;
+    }
+    public void setPredRisco(Integer predRisco) {
+        this.predRisco = predRisco;
+    }
+    public Integer getPredOportunidade() {
+        return predOportunidade;
+    }
+    public void setPredOportunidade(Integer predOportunidade) {
+        this.predOportunidade = predOportunidade;
+    }
+    public String getSentimento() {
+        return sentimento;
+    }
+    public void setSentimento(String sentimento) {
+        this.sentimento = sentimento;
+    }
+    public String getProdutosDetectados() {
+        return produtosDetectados;
+    }
+    public void setProdutosDetectados(String produtosDetectados) {
+        this.produtosDetectados = produtosDetectados;
+    }
+    public String getModeloAnalise() {
+        return modeloAnalise;
+    }
+    public void setModeloAnalise(String modeloAnalise) {
+        this.modeloAnalise = modeloAnalise;
+    }
+}
