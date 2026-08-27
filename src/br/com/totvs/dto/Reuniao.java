@@ -1,5 +1,7 @@
 package br.com.totvs.dto;
 import java.sql.Timestamp;
+import java.math.BigDecimal;
+
 
 public class Reuniao {
     private String idReuniao;
@@ -12,6 +14,10 @@ public class Reuniao {
     private String sentimento;
     private String produtosDetectados;
     private String modeloAnalise;
+    private String classeModelo;
+    private BigDecimal probabilidadeModelo;
+    private String fonteDecisao;
+
 
     public Reuniao() {
     }
@@ -74,5 +80,23 @@ public class Reuniao {
     }
     public void setModeloAnalise(String modeloAnalise) {
         this.modeloAnalise = modeloAnalise;
+    }
+    public String getClasseModelo() {
+        return classeModelo;
+    }
+    public void setClasseModelo(String classeModelo) {
+        this.classeModelo = classeModelo;
+    }
+    public BigDecimal getProbabilidadeModelo() {
+        return probabilidadeModelo;
+    }
+    public void setProbabilidadeModelo(BigDecimal probabilidadeModelo) {
+        this.probabilidadeModelo = probabilidadeModelo;
+    }
+    public String getFonteDecisao() {
+        return fonteDecisao;
+    }
+    public void setFonteDecisao(String fonteDecisao) {
+        this.fonteDecisao = fonteDecisao;
     }
 }

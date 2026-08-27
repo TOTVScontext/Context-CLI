@@ -25,8 +25,9 @@ public class ReuniaoDAOImpl implements ReuniaoDAO{
         String sql = "INSERT INTO CONTEXT_REUNIAO "
                 + "(ID_REUNIAO, TRANSCRICAO, PARTICIPANTES, ORIGEM_ENTRADA, "
                 + "DATA_ANALISE, PRED_RISCO, PRED_OPORTUNIDADE, SENTIMENTO, "
-                + "PRODUTOS_DETECTADOS, MODELO_ANALISE) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "PRODUTOS_DETECTADOS, MODELO_ANALISE, CLASSE_MODELO, "
+                + "PROBABILIDADE_MODELO, FONTE_DECISAO) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         if (con == null) {
             return "Conexao nao estabelecida";
@@ -49,6 +50,15 @@ public class ReuniaoDAOImpl implements ReuniaoDAO{
             ps.setString(8, reuniao.getSentimento());
             ps.setString(9, reuniao.getProdutosDetectados());
             ps.setString(10, reuniao.getModeloAnalise());
+            ps.setString(11, reuniao.getClasseModelo());
+
+            if (reuniao.getProbabilidadeModelo() == null) {
+                ps.setNull(12, Types.NUMERIC);
+            } else {
+                ps.setBigDecimal(12, reuniao.getProbabilidadeModelo());
+            }
+
+            ps.setString(13, reuniao.getFonteDecisao());
 
             int linhasAfetadas = ps.executeUpdate();
 
@@ -61,6 +71,7 @@ public class ReuniaoDAOImpl implements ReuniaoDAO{
             return "Erro de SQL ao inserir reuniao: " + e.getMessage();
         }
     }
+
 
     @Override
     public String alterar(Reuniao reuniao) {
