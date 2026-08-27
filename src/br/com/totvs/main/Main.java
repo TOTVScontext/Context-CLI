@@ -2,6 +2,8 @@ package br.com.totvs.main;
 
 import br.com.totvs.domain.*;
 import br.com.totvs.infrastructure.ReportGenerator;
+import br.com.totvs.service.ReuniaoPersistenceService;
+
 
 import java.util.Scanner;
 import java.util.List;
@@ -59,6 +61,14 @@ public class Main {
         InsightService service = new InsightService(7.0);
         List<Insight> alertas = service.generate(analise);
 
+        ReuniaoPersistenceService persistenceService = new ReuniaoPersistenceService();
+        String resultadoPersistencia = persistenceService.salvar(
+                conversa,
+                analise,
+                "TEXTO",
+                "context v0.1.8"
+        );
+        System.out.println("Persistencia: " + resultadoPersistencia);
 
         java.util.function.Function<Double, String> bar = (value) -> {
             int total = 10;
