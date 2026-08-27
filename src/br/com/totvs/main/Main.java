@@ -2,10 +2,22 @@ package br.com.totvs.main;
 
 import br.com.totvs.domain.*;
 import br.com.totvs.infrastructure.ReportGenerator;
+import br.com.totvs.service.ReuniaoPersistenceService;
+
+
+import java.io.IOException;
+import java.nio.file.Path;
+
+import br.com.totvs.repository.JsonMeetingRepository;
+import br.com.totvs.voice.VoiceIdResolver;
+
+import java.nio.file.Path;
+import java.util.Optional;
+
 
 import java.util.Scanner;
 import java.util.List;
-import java.util.Arrays;
+
 
 public class Main {
     private static String clean(String msg) {
@@ -15,7 +27,17 @@ public class Main {
                 .trim();
     }
 
-    public static void main(String[] args) {
+    private static String lerTranscricao(Scanner scan) {
+        System.out.print(
+                "\n" + "─".repeat(150)
+                        + "\nTranscrição\n"
+                        + "─".repeat(150) + "\n> "
+        );
+        return scan.nextLine();
+    }
+
+
+    public static void main(String[] args) throws IOException {
         final String RESET = "\u001B[0m";
         final String PRIMARY = "\u001B[38;5;111m";
         final String SECONDARY = "\u001B[38;5;110m";
@@ -43,13 +65,85 @@ public class Main {
         );
         System.out.println("\n"+" ".repeat(9)+PRIMARY+"✦"+RESET+" Inteligência de Interações Corporativas "+PRIMARY+"✦"+RESET+"\n"+" ".repeat(9));
 
-        System.out.print(MUTED+"─".repeat(150)+RESET+"\nID da Reunião\n"+MUTED+"─".repeat(150)+PRIMARY+"\n> "+RESET);
-        String idConversa = scan.nextLine();
+        JsonMeetingRepository repository = new JsonMeetingRepository(
+                Path.of("data", "ANON_transcricao.json")
+        );
 
-        System.out.print("\n"+MUTED+"─".repeat(150)+RESET+"\nTranscrição\n"+MUTED+"─".repeat(150)+PRIMARY+"\n> "+RESET);
-        String textoConversa = scan.nextLine();
+        System.out.println(
+                "\n" + MUTED + "─".repeat(150) + RESET
+                        + "\nComo deseja informar a reunião?\n"
+                        + "1 - Digitar ID\n"
+                        + "2 - Falar ID\n"
+                        + MUTED + "─".repeat(150) + RESET
+        );
+        System.out.print(PRIMARY + "Escolha uma opção: " + RESET);
+        String opcaoId = scan.nextLine().trim();
 
-        Conversation conversa = new Conversation(idConversa, textoConversa, Arrays.asList("Vendedor", "Cliente"));
+        String idConversa;
+        String origemEntrada;
+
+        if ("2".equals(opcaoId)
+                || "falar".equalsIgnoreCase(opcaoId)) {
+            try {
+                VoiceIdResolver resolver =
+                        new VoiceIdResolver(repository);
+                idConversa = resolver.capturarId(scan);
+                origemEntrada = "VOZ";
+            } catch (Exception e) {
+                System.out.println(
+                        YELLOW + "Não foi possível reconhecer o ID: "
+                                + e.getMessage() + RESET
+                );
+                System.out.println(
+                        "Digite um ID existente para continuar."
+                );
+                System.out.print("ID da Reunião: ");
+                idConversa = scan.nextLine().trim();
+                origemEntrada = "JSON";
+            }
+        } else {
+            System.out.print(
+                    "\n" + MUTED + "─".repeat(150) + RESET
+                            + "\nID da Reunião\n"
+                            + MUTED + "─".repeat(150) + PRIMARY
+                            + "\n> " + RESET
+            );
+            idConversa = scan.nextLine().trim();
+            origemEntrada = "JSON";
+        }
+
+        Optional<Conversation> resultado =
+                repository.buscarPorId(idConversa);
+
+        if (resultado.isEmpty()) {
+            System.out.println(
+                    RED + "Nenhuma reunião encontrada para o ID: "
+                            + idConversa + RESET
+            );
+            scan.close();
+            return;
+        }
+
+        Conversation conversa = resultado.get();
+        String textoConversa = conversa.getText();
+
+        System.out.println(
+                "\n" + SECONDARY + "Transcrição encontrada:" + RESET
+        );
+        System.out.println(textoConversa.substring(
+                0,
+                Math.min(500, textoConversa.length())
+        ));
+        System.out.println(
+                MUTED + "[Transcrição completa carregada do JSON]"
+                        + RESET
+        );
+        System.out.println(
+                "Pressione ENTER para continuar com a análise..."
+        );
+        scan.nextLine();
+
+
 
         System.out.println("\n\n"+MUTED+"─".repeat(150)+"\n"+PRIMARY+"✦"+RESET+" Análise finalizada!\n"+MUTED+"─".repeat(150));
 
@@ -59,6 +153,14 @@ public class Main {
         InsightService service = new InsightService(7.0);
         List<Insight> alertas = service.generate(analise);
 
+        ReuniaoPersistenceService persistenceService = new ReuniaoPersistenceService();
+        String resultadoPersistencia = persistenceService.salvar(
+                conversa,
+                analise,
+                origemEntrada,
+                "context v0.1.8"
+        );
+        System.out.println("Persistencia: " + resultadoPersistencia);
 
         java.util.function.Function<Double, String> bar = (value) -> {
             int total = 10;
