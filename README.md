@@ -1,4 +1,12 @@
-# Context-CLI
+<div align="center">
+
+<img src="./public/assets/img/TOTVScontext.png" width="350px" alt="TOTVS Context" />
+
+![Status](https://img.shields.io/badge/status-In%20Development-yellow )
+![Version](https://img.shields.io/badge/version-0.1.0-blue )
+
+</div>
+
 
 ## Análise de reuniões com Java, Oracle, Data Science e voz local
 
