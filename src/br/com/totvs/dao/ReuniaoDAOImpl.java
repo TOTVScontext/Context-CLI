@@ -84,13 +84,17 @@ public class ReuniaoDAOImpl implements ReuniaoDAO{
                 + "PRED_OPORTUNIDADE = ?, "
                 + "SENTIMENTO = ?, "
                 + "PRODUTOS_DETECTADOS = ?, "
-                + "MODELO_ANALISE = ? "
+                + "MODELO_ANALISE = ?, "
+                + "CLASSE_MODELO = ?, "
+                + "PROBABILIDADE_MODELO = ?, "
+                + "FONTE_DECISAO = ? "
                 + "WHERE ID_REUNIAO = ?";
+
         if (con == null) {
             return "Conexao nao estabelecida";
         }
 
-        try  (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, reuniao.getTranscricao());
             ps.setString(2, reuniao.getParticipantes());
             ps.setString(3, reuniao.getOrigemEntrada());
@@ -106,9 +110,19 @@ public class ReuniaoDAOImpl implements ReuniaoDAO{
             ps.setString(7, reuniao.getSentimento());
             ps.setString(8, reuniao.getProdutosDetectados());
             ps.setString(9, reuniao.getModeloAnalise());
-            ps.setString(10, reuniao.getIdReuniao());
+            ps.setString(10, reuniao.getClasseModelo());
+
+            if (reuniao.getProbabilidadeModelo() == null) {
+                ps.setNull(11, Types.NUMERIC);
+            } else {
+                ps.setBigDecimal(11, reuniao.getProbabilidadeModelo());
+            }
+
+            ps.setString(12, reuniao.getFonteDecisao());
+            ps.setString(13, reuniao.getIdReuniao());
 
             int linhasAfetadas = ps.executeUpdate();
+
             if (linhasAfetadas > 0) {
                 return "Registro alterado com sucesso";
             }
@@ -118,6 +132,7 @@ public class ReuniaoDAOImpl implements ReuniaoDAO{
             return "Erro de SQL ao alterar reuniao: " + e.getMessage();
         }
     }
+
 
     @Override
     public String excluir(String idReuniao) {
@@ -147,15 +162,18 @@ public class ReuniaoDAOImpl implements ReuniaoDAO{
         String sql = "SELECT ID_REUNIAO, TRANSCRICAO, PARTICIPANTES, "
                 + "ORIGEM_ENTRADA, DATA_ANALISE, PRED_RISCO, "
                 + "PRED_OPORTUNIDADE, SENTIMENTO, PRODUTOS_DETECTADOS, "
-                + "MODELO_ANALISE "
+                + "MODELO_ANALISE, CLASSE_MODELO, PROBABILIDADE_MODELO, "
+                + "FONTE_DECISAO "
                 + "FROM CONTEXT_REUNIAO "
                 + "ORDER BY DATA_ANALISE DESC";
 
         ArrayList<Reuniao> reunioes = new ArrayList<>();
+
         if (con == null) {
             System.out.println("Conexao nao estabelecida");
             return reunioes;
         }
+
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
@@ -172,11 +190,20 @@ public class ReuniaoDAOImpl implements ReuniaoDAO{
                 reuniao.setPredRisco(rs.wasNull() ? null : predRisco);
 
                 int predOportunidade = rs.getInt("PRED_OPORTUNIDADE");
-                reuniao.setPredOportunidade(rs.wasNull() ? null : predOportunidade);
+                reuniao.setPredOportunidade(
+                        rs.wasNull() ? null : predOportunidade
+                );
 
                 reuniao.setSentimento(rs.getString("SENTIMENTO"));
-                reuniao.setProdutosDetectados(rs.getString("PRODUTOS_DETECTADOS"));
+                reuniao.setProdutosDetectados(
+                        rs.getString("PRODUTOS_DETECTADOS")
+                );
                 reuniao.setModeloAnalise(rs.getString("MODELO_ANALISE"));
+                reuniao.setClasseModelo(rs.getString("CLASSE_MODELO"));
+                reuniao.setProbabilidadeModelo(
+                        rs.getBigDecimal("PROBABILIDADE_MODELO")
+                );
+                reuniao.setFonteDecisao(rs.getString("FONTE_DECISAO"));
 
                 reunioes.add(reuniao);
             }
@@ -186,4 +213,5 @@ public class ReuniaoDAOImpl implements ReuniaoDAO{
 
         return reunioes;
     }
+
 }
