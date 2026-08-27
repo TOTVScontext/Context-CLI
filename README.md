@@ -265,6 +265,27 @@ O arquivo `ai/transcribe_local.py` usa `faster-whisper` com o modelo `base`, idi
 
 Configure o JDK 25, o `ojdbc17.jar`, as variáveis de ambiente Oracle e os arquivos de dados. Em seguida, execute a classe:
 
+### 9.1 Cenários de demonstração
+
+Para evidenciar que a aplicação consulta o JSON e não inventa uma reunião, recomenda-se executar primeiro um ID inexistente pela opção `1 - Digitar ID`:
+
+```text
+ID informado: 0000000
+Resultado esperado: Nenhuma reunião encontrada para o ID: 0000000
+```
+
+Em seguida, execute dois IDs reais existentes na base de transcrições. Os exemplos abaixo foram separados para a demonstração:
+
+| Tipo de teste | ID | Resultado esperado |
+|---|---|---|
+| ID inexistente | `0000000` | O sistema rejeita o valor e não cria uma `Conversation`. |
+| ID real | `989351` | O sistema encontra a transcrição no `ANON_transcricao.json`; esse ID já foi validado no fluxo de voz. |
+| ID real | `1027294` | O sistema encontra a transcrição no `ANON_transcricao.json`; esse ID foi confirmado na base enviada. |
+
+Para a demonstração por voz, escolha `2 - Falar ID` e fale cada algarismo separadamente. O ID `989351` já foi validado anteriormente no fluxo voz → Whisper local → JSON. Se o registro já tiver sido persistido no Oracle, não o reutilize na mesma tabela, pois `ID_REUNIAO` é chave primária e uma nova análise poderá gerar `ORA-00001`. Nesse caso, use `1027294`, desde que ainda não esteja persistido no seu Oracle. O ID `989351` já foi utilizado como evidência de voz no ambiente do grupo.
+
+O resultado esperado para um ID real é a mensagem `Transcrição encontrada`, seguida do início do texto e da solicitação para pressionar Enter antes da análise. O resultado esperado para o ID inexistente é uma mensagem de reunião não encontrada, sem transcrição inventada e sem persistência no Oracle.
+
 ```text
 br.com.totvs.main.Main
 ```
@@ -370,4 +391,29 @@ SELECT
 FROM CONTEXT_REUNIAO
 ORDER BY DATA_ANALISE DESC;
 ```
+
+## 16. Referências
+
+[1]: https://github.com/TOTVScontext/Context-CLI "Repositório público do Context-CLI"
+
+[2]: https://colab.research.google.com/github/TOTVScontext/DataScience/blob/main/context.ipynb "Notebook Data Science do projeto"
+
+[3]: https://docs.oracle.com/en/java/javase/25/docs/api/java.desktop/javax/sound/sampled/class-use/TargetDataLine.html "Java SE 25 — TargetDataLine"
+
+[4]: https://docs.oracle.com/en/java/javase/25/docs/api/java.sql/java/sql/DriverManager.html "Java SE 25 — DriverManager"
+
+[5]: https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html "Oracle — JDBC and UCP Downloads"
+
+[6]: https://on1.fiap.com.br/updown/upload_fiap/alunos/apostilas/Aula27-Vetores%20de%20Objetos.pdf "FIAP — Aula 27: Vetores de Objetos"
+
+[7]: https://on1.fiap.com.br/updown/upload_fiap/alunos/apostilas/Aula28-Vetores%20de%20Objetos%20e%20Cole%C3%A7%C3%B5es.pdf "FIAP — Aula 28: Vetores de Objetos e Coleções"
+
+[8]: https://on1.fiap.com.br/updown/upload_fiap/alunos/apostilas/Aula29-Collections%20Framework.pdf "FIAP — Aula 29: Collections Framework"
+
+[9]: https://on1.fiap.com.br/updown/upload_fiap/alunos/apostilas/Aula30-Stream%20API.pdf "FIAP — Aula 30: Stream API"
+
+[10]: https://on1.fiap.com.br/updown/upload_fiap/alunos/apostilas/Aula31-Tratamento%20de%20Excecoes.pdf "FIAP — Aula 31: Tratamento de Exceções"
+
+[11]: https://on1.fiap.com.br/updown/upload_fiap/alunos/apostilas/Aula32-Manipula%C3%A7%C3%A3o%20de%20Arquivos.pdf "FIAP — Aula 32: Manipulação de Arquivos"
+
 [12]: https://on1.fiap.com.br/updown/upload_fiap/alunos/apostilas/Aula34-JDBC%20e%20Design%20Patterns%20DAO.pdf "FIAP — Aula 34: JDBC e Design Patterns DAO"
