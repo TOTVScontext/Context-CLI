@@ -36,34 +36,71 @@ public class Main {
         return scan.nextLine();
     }
 
+    private static String[] welcomeBox(String product, String accent, String cream, String border, String reset) {
+        String prefix = "Bem-vindo ao ";
+        int rawLen = (prefix + product).length();
+        int pad = 2;
+        int width = rawLen + pad * 2;
+
+        String top = border + "╭" + "─".repeat(width) + "╮" + reset;
+        String mid = border + "│" + reset
+                + " ".repeat(pad)
+                + cream + prefix + reset
+                + accent + product + reset
+                + " ".repeat(pad)
+                + border + "│" + reset;
+        String bottom = border + "╰" + "─".repeat(width) + "╯" + reset;
+
+        return new String[]{top, mid, bottom};
+    }
+
 
     public static void main(String[] args) throws IOException {
         final String RESET = "\u001B[0m";
-        final String PRIMARY = "\u001B[38;5;111m";
-        final String SECONDARY = "\u001B[38;5;110m";
-        final String MUTED = "\u001B[38;5;245m";
+        final String PRIMARY = "\u001B[38;2;228;177;80m";
+        final String SECONDARY = "\u001B[38;2;230;208;165m";
+        final String MUTED = "\u001B[2m\u001B[38;2;150;130;90m";
+        final String BORDER = "\u001B[38;2;110;95;65m";
 
         final String GREEN = "\u001B[38;5;114m";
         final String RED = "\u001B[38;5;210m";
         final String YELLOW = "\u001B[38;5;222m";
 
         Scanner scan = new Scanner(System.in);
+
+        System.out.println();
+        for (String line : welcomeBox("CONTEXT CLI", PRIMARY, SECONDARY, BORDER, RESET)) {
+            System.out.println(line);
+        }
+
         System.out.print(
-                        "\n" +
-                        "\u001B[38;2;80;160;255m████████╗\u001B[38;2;75;150;250m ██████╗\u001B[38;2;70;140;245m ████████╗\u001B[38;2;65;130;240m██╗   ██╗\u001B[38;2;60;120;235m███████╗\n" +
-                        "\u001B[38;2;75;150;250m╚══██╔══╝\u001B[38;2;70;140;245m██╔═══██╗\u001B[38;2;65;130;240m╚══██╔══╝\u001B[38;2;60;120;235m██║   ██║\u001B[38;2;55;110;230m██╔════╝\n" +
-                        "\u001B[38;2;70;140;245m   ██║\u001B[38;2;65;130;240m   ██║   ██║\u001B[38;2;60;120;235m   ██║\u001B[38;2;55;110;230m   ██║   ██║\u001B[38;2;50;100;225m███████╗\n" +
-                        "\u001B[38;2;65;130;240m   ██║\u001B[38;2;60;120;235m   ██║   ██║\u001B[38;2;55;110;230m   ██║\u001B[38;2;50;100;225m   ╚██╗ ██╔╝\u001B[38;2;45;90;220m╚════██║\n" +
-                        "\u001B[38;2;60;120;235m   ██║\u001B[38;2;55;110;230m   ╚██████╔╝\u001B[38;2;50;100;225m   ██║\u001B[38;2;45;90;220m    ╚████╔╝ \u001B[38;2;40;80;215m███████║\n" +
-                        "\u001B[38;2;55;110;230m   ╚═╝\u001B[38;2;50;100;225m    ╚═════╝ \u001B[38;2;45;90;220m   ╚═╝\u001B[38;2;40;80;215m     ╚═══╝  \u001B[38;2;35;70;210m╚══════╝\n" +
-                        "\u001B[38;2;50;100;225m ██████╗\u001B[38;2;45;90;220m ██████╗ ███╗   ██╗████████╗███████╗██╗  ██╗████████╗\n" +
-                        "\u001B[38;2;45;90;220m██╔════╝\u001B[38;2;40;80;215m██╔═══██╗████╗  ██║╚══██╔══╝██╔════╝╚██╗██╔╝╚══██╔══╝\n" +
-                        "\u001B[38;2;40;80;215m██║\u001B[38;2;35;70;210m     ██║   ██║██╔██╗ ██║   ██║   █████╗   ╚███╔╝    ██║\n" +
-                        "\u001B[38;2;35;70;210m██║\u001B[38;2;30;60;205m     ██║   ██║██║╚██╗██║   ██║   ██╔══╝   ██╔██╗    ██║\n" +
-                        "\u001B[38;2;30;60;205m╚██████╗\u001B[38;2;25;50;150m╚██████╔╝██║ ╚████║   ██║   ███████╗██╔╝ ██╗   ██║\n" +
-                        "\u001B[38;2;25;50;150m ╚═════╝\u001B[38;2;20;40;195m ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝   ╚═╝\u001B[0m\n"
+                "\n" +
+                        "\u001B[38;2;255;200;90m████████╗\u001B[38;2;250;192;86m ██████╗\u001B[38;2;245;184;82m ████████╗\u001B[38;2;240;176;78m██╗   ██╗\u001B[38;2;235;168;74m███████╗\n" +
+                        "\u001B[38;2;250;192;86m╚══██╔══╝\u001B[38;2;245;184;82m██╔═══██╗\u001B[38;2;240;176;78m╚══██╔══╝\u001B[38;2;235;168;74m██║   ██║\u001B[38;2;230;160;70m██╔════╝\n" +
+                        "\u001B[38;2;245;184;82m   ██║\u001B[38;2;240;176;78m   ██║   ██║\u001B[38;2;235;168;74m   ██║\u001B[38;2;230;160;70m   ██║   ██║\u001B[38;2;225;152;66m███████╗\n" +
+                        "\u001B[38;2;240;176;78m   ██║\u001B[38;2;235;168;74m   ██║   ██║\u001B[38;2;230;160;70m   ██║\u001B[38;2;225;152;66m   ╚██╗ ██╔╝\u001B[38;2;220;144;62m╚════██║\n" +
+                        "\u001B[38;2;235;168;74m   ██║\u001B[38;2;230;160;70m   ╚██████╔╝\u001B[38;2;225;152;66m   ██║\u001B[38;2;220;144;62m    ╚████╔╝ \u001B[38;2;215;136;58m███████║\n" +
+                        "\u001B[38;2;230;160;70m   ╚═╝\u001B[38;2;225;152;66m    ╚═════╝ \u001B[38;2;220;144;62m   ╚═╝\u001B[38;2;215;136;58m     ╚═══╝  \u001B[38;2;210;128;54m╚══════╝\n" +
+                        "\u001B[38;2;225;152;66m ██████╗\u001B[38;2;220;144;62m ██████╗ ███╗   ██╗████████╗███████╗██╗  ██╗████████╗\n" +
+                        "\u001B[38;2;220;144;62m██╔════╝\u001B[38;2;215;136;58m██╔═══██╗████╗  ██║╚══██╔══╝██╔════╝╚██╗██╔╝╚══██╔══╝\n" +
+                        "\u001B[38;2;215;136;58m██║\u001B[38;2;210;128;54m     ██║   ██║██╔██╗ ██║   ██║   █████╗   ╚███╔╝    ██║\n" +
+                        "\u001B[38;2;210;128;54m██║\u001B[38;2;205;120;50m     ██║   ██║██║╚██╗██║   ██║   ██╔══╝   ██╔██╗    ██║\n" +
+                        "\u001B[38;2;205;120;50m╚██████╗\u001B[38;2;200;112;46m╚██████╔╝██║ ╚████║   ██║   ███████╗██╔╝ ██╗   ██║\n" +
+                        "\u001B[38;2;200;112;46m ╚═════╝\u001B[38;2;195;104;42m ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝   ╚═╝\u001B[0m\n"
+                + "\n"
         );
-        System.out.println("\n"+" ".repeat(9)+PRIMARY+"✦"+RESET+" Inteligência de Interações Corporativas "+PRIMARY+"✦"+RESET+"\n"+" ".repeat(9));
+
+        System.out.println(
+                " ".repeat(9) + PRIMARY + "✦" + RESET
+                        + " " + SECONDARY + "Inteligência de Interações Corporativas" + RESET
+                        + " " + PRIMARY + "✦" + RESET
+        );
+        System.out.println();
+        System.out.println(
+                " ".repeat(9) + MUTED
+                        + "Pronto — informe abaixo os dados da reunião para começar"
+                        + RESET
+        );
 
         JsonMeetingRepository repository = new JsonMeetingRepository(
                 Path.of("data", "ANON_transcricao.json")
