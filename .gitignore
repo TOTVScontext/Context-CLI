@@ -1,5 +1,4 @@
 out/
 *.class
-/lib/*.jar
 /data/
 /audio/
