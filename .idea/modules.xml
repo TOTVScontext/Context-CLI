@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/DDD-JAVA.iml" filepath="$PROJECT_DIR$/.idea/DDD-JAVA.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ContextCLI.iml" filepath="$PROJECT_DIR$/ContextCLI.iml" />
     </modules>
   </component>
 </project>

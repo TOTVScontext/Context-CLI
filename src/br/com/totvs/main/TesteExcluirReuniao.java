@@ -7,7 +7,7 @@ import br.com.totvs.dao.ReuniaoDAOImpl;
 import java.sql.Connection;
 
 public class TesteExcluirReuniao {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Connection con = null;
 
         try {

@@ -142,22 +142,17 @@ O arquivo JSON é lido como JSON Lines, ou seja, uma reunião por linha. O repos
 
 ## 6. Credenciais do Oracle
 
-As credenciais reais não ficam gravadas no código nem no repositório. A classe `ConnectionFactory` lê as variáveis de ambiente `ORACLE_USER` e `ORACLE_PASS`.
+A classe `ConnectionFactory` já traz como padrão as credenciais do ambiente acadêmico da FIAP (usuário `rm564929`). Isso é suficiente para rodar o projeto sem nenhuma configuração adicional.
 
-No IntelliJ, abra **Run > Edit Configurations**, selecione a configuração da classe que será executada e preencha o campo **Environment variables** com valores locais:
-
-```text
-ORACLE_USER=seu_usuario_fiap;ORACLE_PASS=sua_senha_fiap
-```
-
-No Git Bash, a configuração equivalente para a sessão atual é:
+Caso seja necessário apontar para outro schema/usuário (por exemplo, em outra máquina ou ambiente), as credenciais podem ser sobrescritas pelas variáveis de ambiente `ORACLE_USER`, `ORACLE_PASSWORD` e `ORACLE_URL`, sem alterar o código-fonte:
 
 ```bash
 export ORACLE_USER="seu_usuario_fiap"
-export ORACLE_PASS="sua_senha_fiap"
+export ORACLE_PASSWORD="sua_senha_fiap"
+export ORACLE_URL="jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL"
 ```
 
-Nunca substitua esses exemplos pela senha em um arquivo versionado e nunca publique a senha no GitHub. A URL usada pela conexão é:
+No IntelliJ, isso pode ser definido em **Run > Edit Configurations > Environment variables**. A URL padrão usada pela conexão é:
 
 ```text
 jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
@@ -271,48 +266,38 @@ O arquivo `ai/transcribe_local.py` usa `faster-whisper` com o modelo `base`, idi
 
 ## 9. Como executar o fluxo principal
 
-Configure o JDK 25, o `ojdbc17.jar`, as variáveis de ambiente Oracle e os arquivos de dados. Em seguida, execute a classe:
-
-### 9.1 Cenários de demonstração
-
-Para evidenciar que a aplicação consulta o JSON e não inventa uma reunião, recomenda-se executar primeiro um ID inexistente pela opção `1 - Digitar ID`:
-
-```text
-ID informado: 0000000
-Resultado esperado: Nenhuma reunião encontrada para o ID: 0000000
-```
-
-Em seguida, execute dois IDs reais existentes na base de transcrições. Os exemplos abaixo foram separados para a demonstração:
-
-| Tipo de teste | ID | Resultado esperado |
-|---|---|---|
-| ID inexistente | `0000000` | O sistema rejeita o valor e não cria uma `Conversation`. |
-| ID real | `989351` | O sistema encontra a transcrição no `ANON_transcricao.json`; esse ID já foi validado no fluxo de voz. |
-| ID real | `1027294` | O sistema encontra a transcrição no `ANON_transcricao.json`; esse ID foi confirmado na base enviada. |
-
-Para a demonstração por voz, escolha `2 - Falar ID` e fale cada algarismo separadamente. O ID `989351` já foi validado anteriormente no fluxo voz → Whisper local → JSON. Se o registro já tiver sido persistido no Oracle, não o reutilize na mesma tabela, pois `ID_REUNIAO` é chave primária e uma nova análise poderá gerar `ORA-00001`. Nesse caso, use `1027294`, desde que ainda não esteja persistido no seu Oracle. O ID `989351` já foi utilizado como evidência de voz no ambiente do grupo.
-
-O resultado esperado para um ID real é a mensagem `Transcrição encontrada`, seguida do início do texto e da solicitação para pressionar Enter antes da análise. O resultado esperado para o ID inexistente é uma mensagem de reunião não encontrada, sem transcrição inventada e sem persistência no Oracle.
+Configure o JDK 25, o `ojdbc17.jar` no classpath e os arquivos de transcrição. Em seguida, execute a classe:
 
 ```text
 br.com.totvs.main.Main
 ```
 
-O fluxo esperado é:
+A partir desta versão, o CONTEXT CLI é **orientado a comandos**: não há mais um prompt inicial pedindo o caminho do arquivo. Depois do banner de boas-vindas, o terminal apresenta o prompt `context-cli ▸` e aguarda um comando no formato `/comando [argumento]`.
 
-1. A aplicação pergunta como a reunião será informada.
-2. Na opção `1`, o usuário digita um ID existente no JSON.
-3. Na opção `2`, o usuário fala o ID, um dígito por vez, e pressiona Enter para finalizar a gravação.
-4. O Whisper local transcreve o áudio.
-5. O `VoiceIdResolver` normaliza números, pontuação e números escritos por extenso.
-6. O Java valida o ID no `ANON_transcricao.json`.
-7. A transcrição encontrada é mostrada parcialmente no terminal.
-8. O `Analyzer` calcula as métricas e o `InsightService` gera os insights.
-9. O `HybridRiskService` consulta o modelo Python e utiliza as regras Java quando a confiança é insuficiente.
-10. O resultado é persistido no Oracle com `ReuniaoPersistenceService`.
-11. O terminal mostra a análise e oferece a geração do relatório DOCX.
+### 9.1 Comandos disponíveis
 
-O fluxo por voz é uma captura curta de arquivo WAV. Ele não é uma conversa contínua, não implementa streaming e não envia o áudio à OpenAI.
+| Comando | Uso | Descrição |
+|---|---|---|
+| `/analyze <caminho>` | `/analyze downloads/transcricoes/meet08.json` | Carrega a transcrição, executa o pipeline de análise (NLP + modelo híbrido de risco), persiste o resultado no Oracle e, ao final, pergunta se deseja gerar o relatório em PDF. |
+| `/history` | `/history` | Lista as últimas 30 análises persistidas (título, data, sentimento e indicador de risco). |
+| `/read <caminho>` | `/read downloads/transcricoes/meet08.json` | Exibe o conteúdo da transcrição no terminal, linha por linha e numerada. |
+| `/rename <caminho>` | `/rename downloads/transcricoes/meet08.json` | Localiza a análise associada ao arquivo (pelo identificador derivado do nome do arquivo) e permite alterar seu título de exibição. |
+| `/delete <caminho>` | `/delete downloads/transcricoes/meet08.json` | Remove definitivamente do Oracle a análise associada ao arquivo, mediante confirmação. |
+| `/help` | `/help` | Lista todos os comandos disponíveis. |
+| `/exit` | `/exit` | Encerra o CONTEXT CLI. |
+
+O identificador (`ID_REUNIAO`) de cada análise é derivado do nome do arquivo informado em `/analyze` (sem a extensão) — por isso `/rename` e `/delete` usam o mesmo caminho de arquivo para localizar o registro correspondente no banco.
+
+### 9.2 Fluxo esperado do comando `/analyze`
+
+1. O usuário digita `/analyze <caminho do arquivo>`.
+2. O CLI valida o arquivo (existência, tamanho, codificação) e carrega a transcrição.
+3. O `Analyzer` calcula as métricas e o `InsightService` gera os insights.
+4. O `HybridRiskService` consulta o modelo Python e utiliza as regras Java quando a confiança é insuficiente.
+5. O resultado é persistido no Oracle com `ReuniaoPersistenceService`.
+6. O terminal mostra a análise completa (metadados, métricas, sinais e insights).
+7. O CLI pergunta se deseja gerar o relatório em PDF e, em caso afirmativo, se deseja abri-lo automaticamente.
+8. O prompt `context-cli ▸` volta a ficar disponível para o próximo comando.
 
 ## 10. Classes de teste
 

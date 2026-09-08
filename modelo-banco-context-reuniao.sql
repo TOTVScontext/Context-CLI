@@ -4,8 +4,7 @@
 
    ATENÇÃO:
    - Execute o CREATE TABLE somente em um schema em que a tabela ainda não exista.
-   - Se CONTEXT_REUNIAO já possuir as dez colunas iniciais, use apenas a migração
-     indicada na seção 2.
+   - Se CONTEXT_REUNIAO já existir sem a coluna TITULO, use a migração da seção 2.
    - Não executar DROP TABLE em ambiente da FIAP sem autorização.
 */
 
@@ -14,6 +13,7 @@
    ================================================================ */
 CREATE TABLE CONTEXT_REUNIAO (
     ID_REUNIAO           VARCHAR2(50) PRIMARY KEY,
+    TITULO                VARCHAR2(200),
     TRANSCRICAO          CLOB NOT NULL,
     PARTICIPANTES        VARCHAR2(1000),
     ORIGEM_ENTRADA       VARCHAR2(20),
@@ -31,20 +31,18 @@ CREATE TABLE CONTEXT_REUNIAO (
 );
 
 /* ================================================================
-   2. Migração para a tabela que já possua as dez colunas iniciais
+   2. Migração para tabelas já existentes
    ================================================================ */
--- Executar somente se as colunas ainda não existirem:
--- ALTER TABLE CONTEXT_REUNIAO ADD (
---     CLASSE_MODELO        VARCHAR2(20),
---     PROBABILIDADE_MODELO NUMBER(5,4),
---     FONTE_DECISAO        VARCHAR2(40)
--- );
+-- Executar somente se a coluna ainda não existir:
+-- ALTER TABLE CONTEXT_REUNIAO ADD (TITULO VARCHAR2(200));
+-- UPDATE CONTEXT_REUNIAO SET TITULO = ID_REUNIAO WHERE TITULO IS NULL;
 
 /* ================================================================
    3. Consultas de verificação
    ================================================================ */
 SELECT
     ID_REUNIAO,
+    TITULO,
     ORIGEM_ENTRADA,
     DBMS_LOB.GETLENGTH(TRANSCRICAO) AS TAMANHO_TRANSCRICAO,
     PRED_RISCO,
@@ -56,6 +54,12 @@ SELECT
     DATA_ANALISE
 FROM CONTEXT_REUNIAO
 ORDER BY DATA_ANALISE DESC;
+
+/* Últimas 30 análises (usado pelo comando /history) */
+SELECT ID_REUNIAO, TITULO, DATA_ANALISE, SENTIMENTO, PRED_RISCO, PRED_OPORTUNIDADE
+FROM CONTEXT_REUNIAO
+ORDER BY DATA_ANALISE DESC
+FETCH FIRST 30 ROWS ONLY;
 
 /* Evidência específica do fluxo de voz. */
 SELECT
@@ -73,7 +77,8 @@ ORDER BY DATA_ANALISE DESC;
    4. Dicionário resumido
    ================================================================
 
-   ID_REUNIAO            Chave primária e ID vindo do JSON ou da entrada.
+   ID_REUNIAO            Chave primária; derivado do nome do arquivo de transcrição.
+   TITULO                Título de exibição da análise (editável via /rename).
    TRANSCRICAO           Texto completo; CLOB para reuniões extensas.
    PARTICIPANTES         Lista textual de participantes.
    ORIGEM_ENTRADA        Origem controlada: TEXTO, VOZ, CSV ou JSON.

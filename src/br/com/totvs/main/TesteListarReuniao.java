@@ -6,17 +6,17 @@ import br.com.totvs.dao.ReuniaoDAOImpl;
 import br.com.totvs.dto.Reuniao;
 
 import java.sql.Connection;
-import java.util.ArrayList;
+import java.util.List;
 
 public class TesteListarReuniao {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Connection con = null;
 
         try {
             con = ConnectionFactory.abrirConexao();
 
             ReuniaoDAO dao = new ReuniaoDAOImpl(con);
-            ArrayList<Reuniao> reunioes = dao.listarTodos();
+            List<Reuniao> reunioes = dao.listarTodos();
 
             System.out.println("Quantidade de reunioes: " + reunioes.size());
 
