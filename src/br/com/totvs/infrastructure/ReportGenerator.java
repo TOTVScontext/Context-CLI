@@ -94,8 +94,14 @@ public class ReportGenerator {
         pdf.text("Identificacao da Reuniao", 14, true, AZUL_TOTVS[0], AZUL_TOTVS[1], AZUL_TOTVS[2]);
         pdf.spacing(4);
         float[] wIdent = {160f, CONTENT_WIDTH() - 160f};
+        String empresa = analise.getCompanyName() != null ? analise.getCompanyName() : "Nao identificada na transcricao";
+        String duracao = analise.getMeetingDurationMinutes() != null
+                ? analise.getMeetingDurationMinutes() + " minutos" + (analise.isDurationEstimated() ? " (estimada)" : " (calculada)")
+                : "Nao foi possivel estimar";
         linhaDupla(pdf, "ID da Reuniao", idReuniao, wIdent, AZUL_TOTVS, BRANCO, BRANCO, PRETO);
         linhaDupla(pdf, "Data e Hora", dataHora, wIdent, CINZA_LINHA, PRETO, BRANCO, PRETO);
+        linhaDupla(pdf, "Empresa/Cliente", empresa, wIdent, AZUL_TOTVS, BRANCO, BRANCO, PRETO);
+        linhaDupla(pdf, "Duracao da Reuniao", duracao, wIdent, CINZA_LINHA, PRETO, BRANCO, PRETO);
         linhaDupla(pdf, "Participantes", participantes, wIdent, AZUL_TOTVS, BRANCO, BRANCO, PRETO);
         linhaDupla(pdf, "Total de Insights", insights.size() + " sinais identificados", wIdent, CINZA_LINHA, PRETO, BRANCO, PRETO);
         pdf.spacing(16);
@@ -114,6 +120,13 @@ public class ReportGenerator {
         linhaMetrica(pdf, "Produtividade", analise.getProductivity(), BRANCO, wMetric);
         linhaMetrica(pdf, "Sentimento", analise.getSentiment(), CINZA_LINHA, wMetric);
         linhaMetrica(pdf, "Resolucao", analise.getResolution(), BRANCO, wMetric);
+        pdf.spacing(8);
+        String valorMencionado = analise.getBudgetValueDetected() != null
+                ? java.text.NumberFormat.getCurrencyInstance(new java.util.Locale("pt", "BR")).format(analise.getBudgetValueDetected())
+                : "Nenhum valor citado na transcricao";
+        linhaDupla(pdf, "Probabilidade de Churn", String.format(java.util.Locale.of("pt", "BR"), "%.1f%%", analise.getChurnProbability()),
+                wIdent, CINZA_LINHA, PRETO, BRANCO, PRETO);
+        linhaDupla(pdf, "Valor Mencionado na Conversa", valorMencionado, wIdent, AZUL_TOTVS, BRANCO, BRANCO, PRETO);
         pdf.spacing(16);
 
         pdf.text("3. Insights Identificados", 14, true, AZUL_TOTVS[0], AZUL_TOTVS[1], AZUL_TOTVS[2]);

@@ -8,8 +8,13 @@ public class RiskInsight extends Insight{
         this.churnProb = churnProb;
     }
 
+    public double getChurnProb() {
+        return churnProb;
+    }
+
     @Override
     public String getMessage() {
-        return "[ALERTA DE RISCO - Nível " + super.getPriority() + "] " + super.getMessage() + " | Risco de Churn: " + this.churnProb + "%";
+        return "[ALERTA DE RISCO - Nível " + super.getPriority() + "] " + super.getMessage()
+                + " | Risco de Churn: " + String.format(java.util.Locale.of("pt", "BR"), "%.1f", this.churnProb) + "%";
     }
 }

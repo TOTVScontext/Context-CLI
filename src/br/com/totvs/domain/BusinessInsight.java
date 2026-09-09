@@ -10,8 +10,15 @@ public class BusinessInsight extends Insight {
         this.potentialValue = potentialValue;
     }
 
+    public double getPotentialValue() {
+        return potentialValue;
+    }
+
     @Override
     public String getMessage() {
-        return "[OPORTUNIDADE DE NEGOCIO] " + super.getMessage() + " | Valor Potencial: R$ " + this.potentialValue;
+        String valorFormatado = java.text.NumberFormat
+                .getCurrencyInstance(new java.util.Locale("pt", "BR"))
+                .format(this.potentialValue);
+        return "[OPORTUNIDADE DE NEGOCIO] " + super.getMessage() + " | Valor Potencial: " + valorFormatado;
     }
 }

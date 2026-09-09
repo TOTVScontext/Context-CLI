@@ -590,6 +590,16 @@ public class Main {
         System.out.printf("  %-18s %s%n", "Analisado em", LocalDateTime.now().format(formatoData));
         System.out.printf("  %-18s %s%n", "Motor de análise", "context v0.2.0");
         System.out.printf("  %-18s %s%n", "Participantes", String.join(", ", participantes));
+        System.out.printf("  %-18s %s%n", "Empresa/Cliente",
+                analise.getCompanyName() != null ? analise.getCompanyName() : MUTED + "não identificada na transcrição" + RESET);
+        if (analise.getMeetingDurationMinutes() != null) {
+            String origemDuracao = analise.isDurationEstimated()
+                    ? " " + MUTED + "(estimada pela extensão do texto)" + RESET
+                    : " " + MUTED + "(calculada a partir dos horários da transcrição)" + RESET;
+            System.out.printf("  %-18s %d min%s%n", "Duração da reunião", analise.getMeetingDurationMinutes(), origemDuracao);
+        } else {
+            System.out.printf("  %-18s %s%n", "Duração da reunião", MUTED + "não foi possível estimar" + RESET);
+        }
         System.out.printf("  %-18s %d caracteres%n", "Tamanho da transcrição", arquivo.texto().length());
 
         System.out.println();
@@ -653,6 +663,18 @@ public class Main {
         }
         if (alertasOrdenados.isEmpty()) {
             System.out.println("  " + MUTED + "Nenhum insight adicional gerado para esta transcrição" + RESET);
+        }
+
+        System.out.println();
+        System.out.println(SECONDARY + "RISCO E OPORTUNIDADE (dados reais da transcrição)" + RESET);
+        System.out.printf("  %-24s %s%n", "Probabilidade de churn",
+                String.format("%.1f%%", analise.getChurnProbability()));
+        if (analise.getBudgetValueDetected() != null) {
+            System.out.printf("  %-24s %s%n", "Valor mencionado",
+                    java.text.NumberFormat.getCurrencyInstance(new java.util.Locale("pt", "BR"))
+                            .format(analise.getBudgetValueDetected()));
+        } else {
+            System.out.printf("  %-24s %s%n", "Valor mencionado", MUTED + "nenhum valor citado na conversa" + RESET);
         }
 
         System.out.println();
