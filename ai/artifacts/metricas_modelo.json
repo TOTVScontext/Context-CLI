@@ -1,50 +1,314 @@
 {
-  "model": "TfidfVectorizer + LogisticRegression",
-  "target": "RISCO",
-  "target_rule": "NOTA_NPS <= 6",
+  "model": "XGBoost",
+  "calibracao": "CalibratedClassifierCV (sigmoid, CV interno 3-fold)",
+  "target": "NPS_SEGMENTO",
+  "target_rule": "DETRATOR: NOTA_NPS<=6 | NEUTRO: 7<=NOTA_NPS<=8 | PROMOTOR: NOTA_NPS>=9",
+  "classes": [
+    "DETRATOR",
+    "NEUTRO",
+    "PROMOTOR"
+  ],
+  "risco_definicao": "probabilidade_risco = P(DETRATOR)",
+  "oportunidade_definicao": "probabilidade_oportunidade = P(PROMOTOR); usada como proxy de intencao de compra / upsell, nao uma confirmacao de venda",
   "rows_total": 500,
   "rows_train": 400,
   "rows_test": 100,
-  "class_distribution": {
-    "risco": 327,
-    "sem_risco": 173
+  "class_distribution_total": {
+    "DETRATOR": 327,
+    "NEUTRO": 90,
+    "PROMOTOR": 83
   },
-  "accuracy": 0.4,
-  "confusion_matrix": [
-    [
-      26,
-      9
+  "diagnostico_de_sinal": {
+    "n_features_avaliadas": 305,
+    "mutual_information_media": 0.0016013026756821098,
+    "mutual_information_maxima": 0.00492322427449772,
+    "top_termos_por_mutual_information": [
+      {
+        "termo": "vocês",
+        "mutual_information": 0.00492322427449772
+      },
+      {
+        "termo": "qual",
+        "mutual_information": 0.00492322427449772
+      },
+      {
+        "termo": "locutor qual",
+        "mutual_information": 0.00492322427449772
+      },
+      {
+        "termo": "locutor gente",
+        "mutual_information": 0.00492322427449772
+      },
+      {
+        "termo": "uma",
+        "mutual_information": 0.00479930483505038
+      },
+      {
+        "termo": "em",
+        "mutual_information": 0.0046255224805470535
+      },
+      {
+        "termo": "lojas em",
+        "mutual_information": 0.0046255224805470535
+      },
+      {
+        "termo": "sim",
+        "mutual_information": 0.0046255224805470535
+      },
+      {
+        "termo": "tempo",
+        "mutual_information": 0.0046255224805470535
+      },
+      {
+        "termo": "lojas",
+        "mutual_information": 0.0046255224805470535
+      },
+      {
+        "termo": "locutor sim",
+        "mutual_information": 0.0046255224805470535
+      },
+      {
+        "termo": "gente oferece",
+        "mutual_information": 0.0043880609945116805
+      },
+      {
+        "termo": "no",
+        "mutual_information": 0.0043880609945116805
+      },
+      {
+        "termo": "uns",
+        "mutual_information": 0.0043880609945116805
+      },
+      {
+        "termo": "oferece",
+        "mutual_information": 0.0043880609945116805
+      }
     ],
-    [
-      51,
-      14
-    ]
-  ],
-  "classification_report": {
-    "SEM_RISCO": {
-      "precision": 0.33766233766233766,
-      "recall": 0.7428571428571429,
-      "f1-score": 0.4642857142857143,
-      "support": 35.0
+    "interpretacao": "Mutual information media e maxima proximas de zero indicam que os termos da transcricao, isoladamente, quase nao reduzem a incerteza sobre o segmento de NPS. Isso e uma limitacao dos dados, nao do algoritmo de classificacao."
+  },
+  "benchmark_representacoes_algoritmos_cv5": {
+    "tfidf_palavras_1-2gram + XGBoost": {
+      "f1_macro_media": 0.2635998539612997,
+      "f1_macro_desvio_padrao": 0.0011924009944180255
     },
-    "RISCO": {
-      "precision": 0.6086956521739131,
-      "recall": 0.2153846153846154,
-      "f1-score": 0.3181818181818182,
-      "support": 65.0
+    "tfidf_caracteres_3-5gram + LogisticRegression": {
+      "f1_macro_media": 0.2635998539612997,
+      "f1_macro_desvio_padrao": 0.0011924009944180255
     },
-    "accuracy": 0.4,
-    "macro avg": {
-      "precision": 0.4731789949181254,
-      "recall": 0.47912087912087914,
-      "f1-score": 0.39123376623376627,
-      "support": 100.0
+    "tfidf_palavras_1-2gram + LogisticRegression": {
+      "f1_macro_media": 0.2635998539612997,
+      "f1_macro_desvio_padrao": 0.0011924009944180255
     },
-    "weighted avg": {
-      "precision": 0.5138339920948617,
-      "recall": 0.4,
-      "f1-score": 0.3693181818181818,
-      "support": 100.0
+    "tfidf_palavras_1-2gram + LinearSVC": {
+      "f1_macro_media": 0.2635998539612997,
+      "f1_macro_desvio_padrao": 0.0011924009944180255
+    },
+    "tfidf_palavras_1-2gram + MultinomialNB": {
+      "f1_macro_media": 0.260921292381085,
+      "f1_macro_desvio_padrao": 0.003785353976165947
     }
-  }
+  },
+  "baseline_majoritario": {
+    "estrategia": "most_frequent",
+    "accuracy": 0.65
+  },
+  "holdout": {
+    "accuracy": 0.65,
+    "balanced_accuracy": 0.3333333333333333,
+    "precision_macro": 0.21666666666666667,
+    "recall_macro": 0.3333333333333333,
+    "f1_macro": 0.2626262626262626,
+    "f1_weighted": 0.5121212121212121,
+    "cohen_kappa": 0.0,
+    "matthews_corrcoef": 0.0,
+    "log_loss": 0.888713759508322,
+    "roc_auc_ovr_macro": 0.5135469699230913,
+    "classification_report": {
+      "DETRATOR": {
+        "precision": 0.65,
+        "recall": 1.0,
+        "f1-score": 0.7878787878787878,
+        "support": 65.0
+      },
+      "NEUTRO": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 18.0
+      },
+      "PROMOTOR": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 17.0
+      },
+      "accuracy": 0.65,
+      "macro avg": {
+        "precision": 0.21666666666666667,
+        "recall": 0.3333333333333333,
+        "f1-score": 0.2626262626262626,
+        "support": 100.0
+      },
+      "weighted avg": {
+        "precision": 0.4225,
+        "recall": 0.65,
+        "f1-score": 0.5121212121212121,
+        "support": 100.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        65,
+        0,
+        0
+      ],
+      [
+        18,
+        0,
+        0
+      ],
+      [
+        17,
+        0,
+        0
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "DETRATOR",
+      "NEUTRO",
+      "PROMOTOR"
+    ]
+  },
+  "intervalo_confianca_bootstrap_95pct": {
+    "accuracy": {
+      "estimativa_pontual": 0.65,
+      "ic_95_inferior": 0.55,
+      "ic_95_superior": 0.74,
+      "n_bootstrap": 2000
+    },
+    "f1_macro": {
+      "estimativa_pontual": 0.2626262626262626,
+      "ic_95_inferior": 0.23655913978494625,
+      "ic_95_superior": 0.2835249042145594,
+      "n_bootstrap": 2000
+    }
+  },
+  "teste_significancia_mcnemar_vs_baseline": {
+    "somente_modelo_acerta": 0,
+    "somente_baseline_acerta": 0,
+    "n_casos_discordantes": 0,
+    "p_valor": 1.0,
+    "significativo_a_5pct": false,
+    "interpretacao": "p < 0.05 indicaria diferenca estatisticamente significativa entre modelo e baseline majoritario neste conjunto de teste. p >= 0.05 significa que essa diferenca pode ser explicada por acaso amostral."
+  },
+  "validacao_cruzada_5fold": {
+    "accuracy": {
+      "media": 0.6540000000000001,
+      "desvio_padrao": 0.004898979485566361,
+      "folds": [
+        0.65,
+        0.65,
+        0.65,
+        0.66,
+        0.66
+      ]
+    },
+    "f1_macro": {
+      "media": 0.2635998539612997,
+      "desvio_padrao": 0.0011924009944180255,
+      "folds": [
+        0.2626262626262626,
+        0.2626262626262626,
+        0.2626262626262626,
+        0.26506024096385544,
+        0.26506024096385544
+      ]
+    },
+    "balanced_accuracy": {
+      "media": 0.3333333333333333,
+      "desvio_padrao": 0.0,
+      "folds": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ]
+    },
+    "roc_auc_ovr_macro": {
+      "media": 0.4970406621181165,
+      "desvio_padrao": 0.038864221616409726,
+      "folds": [
+        0.5449368462369967,
+        0.5259606540336347,
+        0.4873936921529012,
+        0.49564932757409447,
+        0.4312627905929555
+      ]
+    }
+  },
+  "top_termos_por_importancia": [
+    {
+      "termo": "dias",
+      "importancia": 0.14366145431995392
+    },
+    {
+      "termo": "conversar",
+      "importancia": 0.11634194105863571
+    },
+    {
+      "termo": "de",
+      "importancia": 0.07295448333024979
+    },
+    {
+      "termo": "com meu",
+      "importancia": 0.07280378043651581
+    },
+    {
+      "termo": "20",
+      "importancia": 0.07087618857622147
+    },
+    {
+      "termo": "em",
+      "importancia": 0.0632912814617157
+    },
+    {
+      "termo": "30 dias",
+      "importancia": 0.06053148955106735
+    },
+    {
+      "termo": "gente oferece",
+      "importancia": 0.05638783052563667
+    },
+    {
+      "termo": "amanhã gente",
+      "importancia": 0.053278565406799316
+    },
+    {
+      "termo": "amanhã",
+      "importancia": 0.05170328542590141
+    },
+    {
+      "termo": "locutor sim",
+      "importancia": 0.05043327435851097
+    },
+    {
+      "termo": "30",
+      "importancia": 0.04285295307636261
+    },
+    {
+      "termo": "15",
+      "importancia": 0.026777934283018112
+    },
+    {
+      "termo": "isso",
+      "importancia": 0.02518010139465332
+    },
+    {
+      "termo": "lojas",
+      "importancia": 0.02155435085296631
+    }
+  ],
+  "random_state": 42,
+  "observacao": "O alvo e derivado de NOTA_NPS (metodologia padrao de segmentacao NPS): e um proxy de negocio, nao uma confirmacao de churn ou de compra. O diagnostico de mutual information e o benchmark contra 5 combinacoes distintas de representacao/algoritmo mostram que a transcricao mockada atual carrega pouquissimo sinal textual sobre o NPS; isso limita estruturalmente qualquer classificador, independente do algoritmo escolhido. A decisao final de negocio deve continuar combinando o modelo com revisao humana e com o fallback de regras do Java (HybridRiskService)."
 }

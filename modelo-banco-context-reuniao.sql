@@ -1,11 +1,6 @@
 /*
    Context-CLI - Modelo físico Oracle
    Tabela principal da análise de reuniões.
-
-   ATENÇÃO:
-   - Execute o CREATE TABLE somente em um schema em que a tabela ainda não exista.
-   - Se CONTEXT_REUNIAO já existir sem a coluna TITULO, use a migração da seção 2.
-   - Não executar DROP TABLE em ambiente da FIAP sem autorização.
 */
 
 /* ================================================================
@@ -26,8 +21,6 @@ CREATE TABLE CONTEXT_REUNIAO (
     CLASSE_MODELO        VARCHAR2(20),
     PROBABILIDADE_MODELO NUMBER(5,4),
     FONTE_DECISAO        VARCHAR2(40),
-    CONSTRAINT CK_CONTEXT_ORIGEM
-        CHECK (ORIGEM_ENTRADA IN ('TEXTO', 'VOZ', 'CSV', 'JSON'))
 );
 
 /* ================================================================
@@ -60,18 +53,6 @@ SELECT ID_REUNIAO, TITULO, DATA_ANALISE, SENTIMENTO, PRED_RISCO, PRED_OPORTUNIDA
 FROM CONTEXT_REUNIAO
 ORDER BY DATA_ANALISE DESC
 FETCH FIRST 30 ROWS ONLY;
-
-/* Evidência específica do fluxo de voz. */
-SELECT
-    ID_REUNIAO,
-    ORIGEM_ENTRADA,
-    CLASSE_MODELO,
-    PROBABILIDADE_MODELO,
-    FONTE_DECISAO,
-    DBMS_LOB.GETLENGTH(TRANSCRICAO) AS TAMANHO_TRANSCRICAO
-FROM CONTEXT_REUNIAO
-WHERE ORIGEM_ENTRADA = 'VOZ'
-ORDER BY DATA_ANALISE DESC;
 
 /* ================================================================
    4. Dicionário resumido
