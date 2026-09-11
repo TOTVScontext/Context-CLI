@@ -18,8 +18,8 @@ public final class ConnectionFactory {
     private static final String DRIVER_JDBC = "oracle.jdbc.driver.OracleDriver";
 
     private static final String URL_PADRAO = "jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL";
-    private static final String USUARIO_PADRAO = "rm564929";
-    private static final String SENHA_PADRAO = "060207";
+    private static final String USUARIO_PADRAO = "";
+    private static final String SENHA_PADRAO = "";
 
     private ConnectionFactory() {
     }
