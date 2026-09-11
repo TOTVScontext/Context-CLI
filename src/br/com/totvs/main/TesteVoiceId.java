@@ -1,6 +1,6 @@
 package br.com.totvs.main;
 
-import br.com.totvs.domain.Conversation;
+import br.com.totvs.model.Conversation;
 import br.com.totvs.repository.JsonMeetingRepository;
 import br.com.totvs.voice.VoiceIdResolver;
 

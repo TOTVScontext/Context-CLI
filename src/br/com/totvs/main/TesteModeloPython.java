@@ -2,8 +2,8 @@ package br.com.totvs.main;
 
 import br.com.totvs.integration.PythonModelClient;
 import br.com.totvs.integration.PredicaoModelo;
-import br.com.totvs.domain.Analysis;
-import br.com.totvs.domain.Conversation;
+import br.com.totvs.model.Analysis;
+import br.com.totvs.model.Conversation;
 import br.com.totvs.integration.HybridRiskService;
 
 

@@ -3,8 +3,8 @@ package br.com.totvs.service;
 import br.com.totvs.dao.ConnectionFactory;
 import br.com.totvs.dao.ReuniaoDAO;
 import br.com.totvs.dao.ReuniaoDAOImpl;
-import br.com.totvs.domain.Analysis;
-import br.com.totvs.domain.Conversation;
+import br.com.totvs.model.Analysis;
+import br.com.totvs.model.Conversation;
 import br.com.totvs.dto.Reuniao;
 import br.com.totvs.integration.HybridRiskService;
 

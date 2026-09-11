@@ -1,7 +1,7 @@
 package br.com.totvs.integration;
 
-import br.com.totvs.domain.Analysis;
-import br.com.totvs.domain.Conversation;
+import br.com.totvs.model.Analysis;
+import br.com.totvs.model.Conversation;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package br.com.totvs.domain;
+package br.com.totvs.model;
 
 public class BusinessInsight extends Insight {
     private double potentialValue;

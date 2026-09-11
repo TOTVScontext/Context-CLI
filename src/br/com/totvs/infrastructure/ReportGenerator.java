@@ -1,8 +1,8 @@
 package br.com.totvs.infrastructure;
 
-import br.com.totvs.domain.Analysis;
-import br.com.totvs.domain.Conversation;
-import br.com.totvs.domain.Insight;
+import br.com.totvs.model.Analysis;
+import br.com.totvs.model.Conversation;
+import br.com.totvs.model.Insight;
 import br.com.totvs.infrastructure.pdf.PdfBuilder;
 
 import java.io.IOException;

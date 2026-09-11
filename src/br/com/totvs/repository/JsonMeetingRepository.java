@@ -1,6 +1,6 @@
 package br.com.totvs.repository;
 
-import br.com.totvs.domain.Conversation;
+import br.com.totvs.model.Conversation;
 
 import java.io.BufferedReader;
 import java.io.IOException;

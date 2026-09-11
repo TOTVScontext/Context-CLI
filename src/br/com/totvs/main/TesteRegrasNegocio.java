@@ -1,7 +1,7 @@
 package br.com.totvs.main;
 
-import br.com.totvs.domain.Analysis;
-import br.com.totvs.domain.InsightService;
+import br.com.totvs.model.Analysis;
+import br.com.totvs.model.InsightService;
 
 public class TesteRegrasNegocio {
 
